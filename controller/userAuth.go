@@ -35,7 +35,7 @@ func Register(c *gin.Context) {
 	}
 
 	// 레코드 생성
-	user := models.User{Name: body.Name, UserId: body.UserID, Password: body.Password, NativeLanguage: body.NativeLanguage}
+	user := models.User{Name: body.Name, UserID: body.UserID, Password: body.Password, NativeLanguage: body.NativeLanguage}
 	res := initializers.DB.Create(&user)
 	if res.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

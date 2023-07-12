@@ -22,7 +22,7 @@ func main() {
 	engine.POST("/auth/logout", middleware.RequireAuth, controller.Logout)
 	engine.POST("/auth/vaildate", middleware.RequireAuth, controller.Vaildate)
 
-	engine.GET("/users/:id", controller.GetUserInfo)
+	engine.GET("/api/users/info", controller.GetUserInfo)
 
 	engine.Run(":9190")
 }
