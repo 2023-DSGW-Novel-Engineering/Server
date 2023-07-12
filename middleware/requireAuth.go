@@ -45,7 +45,7 @@ func RequireAuth(c *gin.Context) {
 			return
 		}
 
-		c.Set("user", user)
+		c.Set("user-from-middleware", user)
 		c.Next()
 
 	} else {

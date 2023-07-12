@@ -108,23 +108,21 @@ func Login(c *gin.Context) {
 	}
 
 	// Token을 되돌려 주다.
-
 	c.JSON(http.StatusOK, gin.H{
 		"token": tokenString,
 	})
 
 }
 
-func Logout(c *gin.Context) {
-	c.SetCookie("Authorization", "", -1, "", "", false, true)
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Success logout",
-	})
+// func Logout(c *gin.Context) {
+// 	c.JSON(http.StatusOK, gin.H{
+// 		"message": "Success logout",
+// 	})
 
-}
+// }
 
 func Vaildate(c *gin.Context) {
-	user, _ := c.Get("user")
+	user, _ := c.Get("user-from-middleware")
 
 	fmt.Println(user)
 	c.JSON(http.StatusOK, gin.H{})

@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/2023-DSGW-Novel-Engineering/cation-backend/initializers"
 	"github.com/2023-DSGW-Novel-Engineering/cation-backend/models"
@@ -9,11 +11,25 @@ import (
 )
 
 func GetUserInfo(c *gin.Context) {
-	var body struct {
-		Name string `json:"name"`
-	}
+	temp, _ := c.Get("user-from-middleware")
+	user := temp.(models.User)
 
-	if err := c.BindJSON(&body); err != nil {
+	c.JSON(http.StatusOK, gin.H{
+		"name":            user.Name,
+		"user_id":         user.UserID,
+		"native_language": user.NativeLanguage,
+	})
+
+}
+
+type AddFriendBody struct {
+	TargetUserID string `json:"target_user_id"`
+}
+
+func AddFriend(c *gin.Context) {
+	body := new(AddFriendBody)
+	if err := c.BindJSON(body); err != nil {
+		log.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Failed to read body",
 		})
@@ -21,34 +37,22 @@ func GetUserInfo(c *gin.Context) {
 		return
 	}
 
-	if body.Name == "" {
+	temp, _ := c.Get("user-from-middleware")
+	user := temp.(models.User)
+
+	i, _ := strconv.Atoi(body.TargetUserID)
+
+	friendModel := &models.Friend{Me: int(user.ID), Target: i}
+	res := initializers.DB.Create(friendModel)
+	if res.Error != nil {
+		log.Println(res.Error)
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Empty Each body values",
+			"error": "No create firend data",
 		})
 
 		return
 	}
 
-	// DB select
-
-	// db.Where("name = ?", "John").Find(&users)
-	// select * from users where name = body.Name
-	user := new(models.User)
-	if res := initializers.DB.Where("name = ?", body.Name).Find(user); res.Error != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "User not found",
-		})
-
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"name":            user.Name,
-		"user_id":         user.UserID,
-		"native_language": user.NativeLanguage,
-	})
-}
-
-func AddFriend(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{})
 
 }
