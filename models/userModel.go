@@ -8,5 +8,4 @@ type User struct {
 	Name           string `json:"name"`
 	Password       string `json:"password"`
 	NativeLanguage string `json:"native_language"`
-	ImagePath      string `json:"image_path"`
 }

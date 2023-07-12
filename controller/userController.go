@@ -32,6 +32,5 @@ func GetUserInfo(c *gin.Context) {
 		"id":              user.ID,
 		"name":            user.Name,
 		"native_language": user.NativeLanguage,
-		"image_path":      user.ImagePath,
 	})
 }

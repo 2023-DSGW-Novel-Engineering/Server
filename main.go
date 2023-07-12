@@ -18,8 +18,5 @@ func main() {
 	// userController
 	engine.GET("/users/:id", controller.GetUserInfo)
 
-	// picturesController
-	engine.GET("/pictures/users/:name", controller.GetPicture)
-
 	engine.Run(":3000")
 }
