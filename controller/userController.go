@@ -3,7 +3,6 @@ package controller
 import (
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/2023-DSGW-Novel-Engineering/cation-backend/initializers"
 	"github.com/2023-DSGW-Novel-Engineering/cation-backend/models"
@@ -23,7 +22,7 @@ func GetUserInfo(c *gin.Context) {
 }
 
 type AddFriendBody struct {
-	TargetUserID string `json:"target_user_id"`
+	TargetUserName string `json:"target_user_name"`
 }
 
 func AddFriend(c *gin.Context) {
@@ -40,10 +39,19 @@ func AddFriend(c *gin.Context) {
 	temp, _ := c.Get("user-from-middleware")
 	user := temp.(models.User)
 
-	i, _ := strconv.Atoi(body.TargetUserID)
+	userModel := new(models.User)
+	res := initializers.DB.Table("users").Where("name = ?", body.TargetUserName).Find(userModel)
+	if res.Error != nil {
+		log.Println(res.Error)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "No Select userModel",
+		})
 
-	friendModel := &models.Friend{Me: int(user.ID), Target: i}
-	res := initializers.DB.Create(friendModel)
+		return
+	}
+
+	friendModel := &models.Friend{Me: int(user.ID), Target: int(userModel.ID)}
+	res = initializers.DB.Table("friends").Create(friendModel)
 	if res.Error != nil {
 		log.Println(res.Error)
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -55,4 +63,40 @@ func AddFriend(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{})
 
+}
+
+func GetFriendList(c *gin.Context) {
+	temp, _ := c.Get("user-from-middleware")
+	user := temp.(models.User)
+
+	friendModel := []models.Friend{}
+	res := initializers.DB.Where("me = ?", user.ID).Find(&friendModel)
+	if res.Error != nil {
+		log.Println(res.Error)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "No Find friendModel",
+		})
+
+		return
+	}
+
+	response := []string{}
+	for _, v := range friendModel {
+		userModel := new(models.User)
+		res := initializers.DB.Table("users").Where("id = ?", v.Target).Find(userModel)
+		if res.Error != nil {
+			log.Println(res.Error)
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "user table no select",
+			})
+
+			return
+		}
+
+		response = append(response, userModel.Name)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"users": response,
+	})
 }
