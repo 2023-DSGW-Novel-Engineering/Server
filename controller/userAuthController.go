@@ -108,7 +108,6 @@ func Login(c *gin.Context) {
 	}
 
 	// Token을 되돌려 주다.
-	c.SetCookie("Authorization", tokenString, 3600*24*30 /*30일*/, "", "", false, true)
 
 	c.JSON(http.StatusOK, gin.H{
 		"token": tokenString,

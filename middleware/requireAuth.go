@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/2023-DSGW-Novel-Engineering/cation-backend/initializers"
@@ -13,12 +14,8 @@ import (
 )
 
 func RequireAuth(c *gin.Context) {
-	tokenString, err := c.Cookie("Authorization")
+	tokenString := strings.Split(c.Request.Header["Authorization"][0], " ")[1]
 
-	if err != nil {
-		c.AbortWithStatus(http.StatusUnauthorized)
-		return
-	}
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method %V", token.Header["alg"])

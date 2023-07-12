@@ -48,3 +48,7 @@ func GetUserInfo(c *gin.Context) {
 		"native_language": user.NativeLanguage,
 	})
 }
+
+func AddFriend(c *gin.Context) {
+
+}
