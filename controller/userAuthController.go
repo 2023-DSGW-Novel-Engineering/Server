@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -49,14 +50,18 @@ func Register(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{})
 }
 
+type loginBody struct {
+	UserID   string `json:"user_id"`
+	Password string `json:"password"`
+}
+
 func Login(c *gin.Context) {
-	var body struct {
-		UserID   string `json:"user_id"`
-		Password string `json:"password"`
-	}
+
+	body := new(loginBody)
 
 	// body 값 bind
-	if err := c.BindJSON(&body); err != nil {
+	if err := c.BindJSON(body); err != nil {
+		log.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Failed to read body",
 		})
@@ -64,12 +69,14 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	fmt.Println(body)
+
 	// Empty 확인
 	if body.UserID == "" || body.Password == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Empty Each body values",
 		})
-
+		log.Print("")
 		return
 	}
 

@@ -15,6 +15,7 @@ func init() {
 
 func main() {
 	engine := gin.Default()
+	engine.Use(middleware.CORSMiddleware())
 
 	// userController
 	engine.POST("/auth/register", controller.Register)
@@ -24,5 +25,5 @@ func main() {
 
 	engine.GET("/api/users/info", controller.GetUserInfo)
 
-	engine.Run(":9190")
+	engine.Run(":4000")
 }
