@@ -1,5 +1,3 @@
-# Server
-
 ## 📌 Stack
 
 | STACK                |   Server             |
