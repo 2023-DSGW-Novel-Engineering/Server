@@ -21,10 +21,10 @@ func main() {
 	engine.POST("/auth/register", controller.Register)
 	engine.POST("/auth/login", controller.Login)
 	engine.POST("/auth/vaildate", middleware.RequireAuth, controller.Vaildate)
+	engine.POST("/api/addfriend", middleware.RequireAuth, controller.AddFriend)
 
 	engine.GET("/api/users/info", middleware.RequireAuth, controller.GetUserInfo)
-	engine.POST("/api/addfriend", middleware.RequireAuth, controller.AddFriend)
 	engine.GET("/api/users/friend", middleware.RequireAuth, controller.GetFriendList)
 
-	engine.Run(":4000")
+	engine.Run(":3000")
 }
